@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>👁️ C U - PRODUCTION ULTIMATE SPECTRAL MATRIX // KENESIS_X</title>
+<!-- 3D Graphics and Touch-Gesture Engines -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<!-- Crypto-JS for Local Storage State Encryption Block -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<style>
+:root {
+  --bg: #010103; --panel-bg: rgba(6, 6, 11, 0.98); --card-bg: #05050a;
+  --border: #14142a; --accent: #ff2233; --neon: #00f0ff; --green: #00ff66; --purple: #a122ff; --gray: #7e7e8c;
+}
+body, html {
+  margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg);
+  font-family: 'Courier New', Courier, monospace; overflow: hidden; color: #fff;
+}
+#app-container { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+
+/* Upper Half: Split Dual Parameter Telemetry Windows */
+#upper-dual-decks {
+  display: grid; grid-template-columns: 1fr 1fr; height: 40vh;
+  border-bottom: 2px solid var(--border); box-sizing: border-box; background: var(--panel-bg); z-index: 10;
+}
+.telemetry-deck { 
+  display: flex; flex-direction: column; height: 100%; border-right: 1px solid var(--border); overflow-y: auto; box-sizing: border-box; padding: 10px;
+}
+
+/* Lower Half: Full Viewport 3D Sonar & Real-Time Topography & Waterfall Canvas */
+#lower-split-arena {
+  display: grid; grid-template-columns: 1fr 220px; height: 60vh; width: 100%; position: relative;
+}
+#lower-map-viewport { width: 100%; height: 100%; position: relative; background: #020205; }
+#waterfall-sidebar {
+  width: 100%; height: 100%; background: #040408; border-left: 2px solid var(--border);
+  display: flex; flex-direction: column; box-sizing: border-box; padding: 8px; overflow: hidden;
+}
+
+/* Global HUD Component Formatting */
+h3 { color: var(--accent); margin: 0 0 6px 0; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+.data-box { background: var(--card-bg); border: 1px solid var(--border); padding: 6px; border-radius: 3px; margin-bottom: 6px; font-size: 0.7em; }
+.row { display: flex; justify-content: space-between; margin-bottom: 2px; color: var(--gray); }
+.row span { color: #fff; font-weight: bold; }
+.btn {
+  background: var(--accent); color: #fff; font-weight: bold; text-transform: uppercase; border: none; padding: 8px; border-radius: 3px; cursor: pointer; width: 100%; font-size: 0.75em; font-family: monospace; margin-bottom: 5px;
+}
+.btn-alt { background: #12090e; border: 1px solid var(--purple); color: var(--neon); }
+
+#canvas-waterfall { background: #000; border: 1px solid #111; flex: 1; width: 100%; }
+
+#strobe-perimeter { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:90; }
+.breach-flash { border: 10px solid var(--accent); background: rgba(255,34,51,0.03); }
+</style>
+</head>
+<body>
+
+<div id="app-container">
+  
+  <!-- UPPER HEMISPHERE: DUAL SCREEN CONTROLLER HUD -->
+  <div id="upper-dual-decks">
+    
+    <!-- LEFT TELEMETRY DECK: NODE CASCADE ENGINE & LAYER 2 ADJACENCIES -->
+    <div class="telemetry-deck">
+      <h3>📡 Infinite Multi-Hop Node Matrix</h3>
+      <div class="data-box">
+        <div class="row">Mesh Nodes Count: <span id="mesh-nodes-counter" style="color:var(--green);">3 Active</span></div>
+        <div class="row">Network Coverage: <span style="color:var(--purple);">Infinite Cascade Scan</span></div>
+        <div class="row">Spectral Sweeper: <span style="color:var(--neon);">WiFi-CSI + BLE + LoRa</span></div>
+      </div>
+      <div id="mesh-link-logs" style="flex: 1; overflow-y: auto; font-size: 0.68em; margin-bottom: 4px;">
+        <!-- Injected via Local Encrypted Storage Parser -->
+      </div>
+      <button class="btn btn-alt" onclick="cascadeNewRemoteNode()">⚡ Cascade Infinite Node Link</button>
+    </div>
+
+    <!-- RIGHT TELEMETRY DECK: GEMINI IN-CONTEXT CLASSIFICATION HUB -->
+    <div class="telemetry-deck" style="border-right:none;">
+      <h3>🤖 Gemini CSI Target Resolver</h3>
+      <div class="data-box" style="border-color: var(--neon);">
+        <div id="target-lbl-name" style="font-weight:bold; color:var(--neon); margin-bottom:2px; font-size:0.95em;">Scanning RF Reflection Matrix...</div>
+        <div class="row">Domain Class: <span id="target-domain-class">--</span></div>
+        <div class="row">Calculated Dimensions: <span id="target-dimensions">--</span></div>
+        <div class="row">Biological Pulse / Motor: <span id="target-vitals-pulse" style="color:var(--accent);">--</span></div>
+      </div>
+      <div id="gemini-ai-diagnostics" style="font-size:0.65em; background:#000; border:1px solid var(--border); padding:6px; color:var(--green); flex: 1; overflow-y:auto; white-space: pre-wrap; text-align: left;">
+[*] Array scanning activated. 
+[+] RF wave fronts intersecting target surfaces.
+[+] Select any 3D element node below to verify subcarrier attributes.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOWER HEMISPHERE: DUAL CANVASES RADAR & SIDEBAR SPECTROGRAM WATERFALL -->
+  <div id="lower-split-arena">
+    <div id="lower-map-viewport">
+      <div id="strobe-perimeter"></div>
+    </div>
+    
+    <!-- LIVE RSSI/CSI SPECTROGRAM VISUAL WATERFALL SYSTEM -->
+    <div id="waterfall-sidebar">
+      <h3 style="font-size:0.7em; margin-bottom:4px; border-color:#222;">📻 Real-Time Spectral Activity</h3>
+      <canvas id="canvas-waterfall"></canvas>
+      <div style="font-size:0.58em; color:var(--gray); text-align:center; margin-top:4px; letter-spacing:0.5px;">Channels 1 - 165 (WiFi/BLE/LoRa Sweep)</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// --- ENCRYPTION CAPABILITIES KEY WRAPPERS ---
+const ENCRYPTION_SECRET_KEY = "KENESIS_X_STRIKE_BACK_SECURE_PHRASE_KEY_ABC123";
+
+function saveSecureNodeMatrix(dataMatrix) {
+  try {
+    const serializedData = JSON.stringify(dataMatrix);
+    const encryptedString = CryptoJS.AES.encrypt(serializedData, ENCRYPTION_SECRET_KEY).toString();
+    localStorage.setItem("CU_ENCRYPTED_MESH_NODES", encryptedString);
+  } catch(e) { console.error("Crypto write restriction:", e); }
+}
+
+function loadSecureNodeMatrix() {
+  try {
+    const encryptedString = localStorage.getItem("CU_ENCRYPTED_MESH_NODES");
+    if (!encryptedString) return null;
+    const decryptedBytes = CryptoJS.AES.decrypt(encryptedString, ENCRYPTION_SECRET_KEY);
+    const regularString = decryptedBytes.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(regularString);
+  } catch(e) {
+    console.error("Crypto decryption pipeline crash, rolling back to default factory maps:", e);
+    return null;
+  }
+}
+
+// --- GLOBAL DECENTRALIZED DATA ARCHITECTURES ---
+const defaultNodesRegistry = [
+  { id: "HUB", name: "Smartphone Origin Anchor", mac: "MASTER_00_00", type: "Hub Receiver", pos: {x: 0, y: 0, z: 0}, connections: ["NODE-01"] },
+  { id: "NODE-01", name: "ESP32 Range Extender", mac: "24:4B:03:AA:BC:11", type: "WiFi-CSI", pos: {x: -30, y: 0, z: -35}, connections: ["HUB", "NODE-02"] },
+  { id: "NODE-02", name: "Raspberry Pi 5 Relay", mac: "DE:AD:BE:EF:00:11", type: "SDR-LoRa", pos: {x: 45, y: 0, z: -15}, connections: ["NODE-01", "NODE-03"] },
+  { id: "NODE-03", name: "NVIDIA Jetson Edge", mac: "00:04:4B:A1:B2:C3", type: "BLE-MIMO", pos: {x: -15, y: 0, z: 50}, connections: ["NODE-02"] }
+];
+
+let nodesChainRegistry = loadSecureNodeMatrix() || defaultNodesRegistry;
+if (!loadSecureNodeMatrix()) { saveSecureNodeMatrix(nodesChainRegistry); }
+
+const targetsDatabase = {
+  "SIG-AVIAN": { name: "Airborne Biological Target (Bird)", domain: "Biological (Avian)", dimensions: "H:0.24m x W:0.38m x L:0.28m", pulse: "390 BPM", col: 0x00f0ff, pos: {x: 20, y: 16, z: -25}, pathType: "flight", desc: "Gemini AI Verification:\nHigh-altitude subcarrier phase shift matches rapid wing-beat bipedal motion profiles cleanly. Classification verified as biological avian unit." },
+  "SIG-UAV": { name: "Surveillance Quadcopter Drone", domain: "Dynamic Mechanical (UAV)", dimensions: "H:0.45m x W:1.20m x L:1.20m", pulse: "MICRO-DOPPLER MOTOR", col: 0xa122ff, pos: {x: -40, y: 28, z: -45}, pathType: "drone", desc: "Gemini AI Verification:\nHigh-frequency RF amplitude modulation matching rotational blade shifts detected. Velocity profiling isolates airborne multi-rotor drone machine." },
+  "SIG-BEAR": { name: "Surface Quadruped Target (Bear)", domain: "Biological (Ursidae)", dimensions: "H:1.42m x W:0.85m x L:2.15m", pulse: "62 BPM", col: 0xffaa00, pos: {x: -50, y: 0, z: 20}, pathType: "ground", desc: "Gemini AI Verification:\nMassive cross-sectional RF signal absorption footprint resolved. Micro-Doppler signature maps chest expansions to 62 BPM respiration cadence." }
+};
+
+// --- INITIALIZE GRAPHICS PIPELINE ENGINE ---
+const container = document.getElementById('lower-map-viewport');
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x020205);
+
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(0, 95, 145);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
+
+// Google Maps Style Orbit Controls: touch drag/swipe to spin world along X, Y, Z planes
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.maxPolarAngle = Math.PI / 2 - 0.02; // Restrict camera view from traveling below landscape baseline bounds
+
+scene.add(new THREE.GridHelper(300, 60, 0x221118, 0x070710));
+
+// --- GENERATE COMPLETE THREE-DIMENSIONAL HEIGHTMAP TOPOGRAPHY ---
+const topographicMeshesPool = [];
+const unmappedWireMaterial = new THREE.LineBasicMaterial({ color: 0x070712 }); // Pitch black / hidden before wave contacts
+
+function createSegmentedTopographyElement(geometry, position, identityLabel) {
+  const mesh = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), unmappedWireMaterial.clone());
+  mesh.position.copy(position);
+  mesh.userData = { isTopography: true, label: identityLabel };
+  scene.add(mesh);
+  topographicMeshesPool.push(mesh);
+}
+
+// 1. Static Surface Boundaries: Mountain Range Terrain
+createSegmentedTopographyElement(new THREE.ConeGeometry(50, 40, 5), new THREE.Vector3(-70, 20, -50), "Mountain Ridge Boundary Alpha");
+createSegmentedTopographyElement(new THREE.ConeGeometry(60, 50, 5), new THREE.Vector3(80, 25, -80), "Mountain Ridge Boundary Bravo");
+
+// 2. Static Surface Boundaries: Tactical Outpost Infrastructure Buildings
+createSegmentedTopographyElement(new THREE.BoxGeometry(16, 20, 16), new THREE.Vector3(50, 10, -45), "Outpost Facility Structure");
+
+// 3. Static Surface Boundaries: Dense Tree Forest Canopies
+createSegmentedTopographyElement(new THREE.CylinderGeometry(0.1, 4, 16, 4), new THREE.Vector3(-25, 8, 35), "Wooded Forest Canopy Node 01");
+createSegmentedTopographyElement(new THREE.CylinderGeometry(0.1, 4, 16, 4), new THREE.Vector3(-40, 8, -10), "Wooded Forest Canopy Node 02");
+
+// --- POPULATE DISTRIBUTED TRANSCEIVER MESH VISUALS ---
+const visualNodesMap = new Map();
+const interconnectedLineVectors = [];
+
+function drawAllNetworkNodeMeshes() {
+  // Clear any past mesh artifacts to handle reactive clean rebuild updates safely
+  visualNodesMap.forEach(m => scene.remove(m));
+  visualNodesMap.clear();
+
+  nodesChainRegistry.forEach(n => {
+    const geo = n.id === "HUB" ? new THREE.SphereGeometry(1.4, 6, 6) : new THREE.BoxGeometry(2.2, 2.2, 2.2);
+    const col = n.id === "HUB" ? 0xffffff : (n.id === "NODE-01" ? 0x00ff66 : (n.id === "NODE-02" ? 0xa122ff : 0x00f0ff));
+    const mesh = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: col }));
+    mesh.position.set(n.pos.x, 1.1, n.pos.z);
+    mesh.userData = { isNode: true, id: n.id, core: n };
+    scene.add(mesh);
+    visualNodesMap.set(n.id, mesh);
+  });
+}
+drawAllNetworkNodeMeshes();
+
+// Render cascading vector trace interconnectivity links
+function refreshMeshVectorTraces() {
+  interconnectedLineVectors.forEach(line => scene.remove(line)); interconnectedLineVectors.length = 0;
+  const traceSet = new Set();
+
+  nodesChainRegistry.forEach(node => {
+    const originMesh = visualNodesMap.get(node.id);
+    if (!originMesh) return;
+    node.connections.forEach(targetId => {
+      const targetMesh = visualNodesMap.get(targetId);
+      if (!targetMesh) return;
+      
+      const pairKey = [node.id, targetId].sort().join('-');
+      if (traceSet.has(pairKey)) return; traceSet.add(pairKey);
+
+      const points = [
+        new THREE.Vector3(originMesh.position.x, originMesh.position.y, originMesh.position.z),
+        new THREE.Vector3(targetMesh.position.x, targetMesh.position.y, targetMesh.position.z)
+      ];
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x44445c, transparent: true, opacity: 0.6 }));
+      scene.add(line);
+      interconnectedLineVectors.push(line);
+    });
+  });
+}
+
+// --- POPULATE ALL-DOMAIN TRACKING TARGETS ---
+const visualTargetsMap = new Map();
+Object.entries(targetsDatabase).forEach(([id, t]) => {
+  const mesh = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.8, 1.8, 1.8)), new THREE.LineBasicMaterial({ color: t.col }));
+  mesh.position.set(t.pos.x, t.pos.y, t.pos.z);
+  mesh.userData = { isTarget: true, id: id, core: t };
+  scene.add(mesh);
+  visualTargetsMap.set(id, mesh);
+});
+
+// --- DYNAMIC RF RAY-TRACE MAPPING CORE PIPELINE ENGINE ---
+function evaluateRFReflectionCollisions() {
+  const transmitterPositions = [...visualNodesMap.values()].map(m => m.position);
+  
+  topographicMeshesPool.forEach(topoMesh => {
+    let waveContactEstablished = false;
+    
+    transmitterPositions.forEach(txPos => {
+      const spacingDistance = txPos.distanceTo(topoMesh.position);
+      // Continuous boundary intersection math checks if the expanding multi-hop wave reaches the surface element
+      if (spacingDistance < 85) {
+        waveContactEstablished = true;
+      }
+    });
+
+    if (waveContactEstablished) {
+      // Force illumination of the hidden landscape shell matching target geometry type
+      if (topoMesh.geometry.type === "CylinderGeometry") {
+        topoMesh.material.color.setHex(0x00ff66); // Forest surface identity
+      } else if (topoMesh.geometry.type === "BoxGeometry") {
+        topoMesh.material.color.setHex(0x00f0ff); // Infrastructure surface identity
+      } else {
+        topoMesh.material.color.setHex(0x444466); // Rugged mountain terrain surface identity
+      }
+    } else {
+      topoMesh.material.color.setHex(0x05050f); // Return to unmapped states
+    }
+  });
+}
+
+// --- TELEMETRY AND MESH LIST DATA INJECTIONS (UPPER LAYERS) ---
+function updateNetworkAdjacencyTableUI() {
+  const logDiv = document.getElementById('mesh-link-logs');
+  logDiv.innerHTML = "";
+  document.getElementById('mesh-nodes-counter').innerText = `${nodesChainRegistry.length} Active`;
+
+  nodesChainRegistry.forEach(n => {
+    let peerSpacings = "";
+    n.connections.forEach(targetId => {
+      const peer = nodesChainRegistry.find(x => x.id === targetId);
+      if (peer) {
+        const d = Math.sqrt((n.pos.x - peer.pos.x)**2 + (n.pos.z - peer.pos.z)**2).toFixed(1);
+        peerSpacings += ` | to [${peer.id}]: ${d}m`;
+      }
+    });
+
+    logDiv.innerHTML += `
+      <div class="data-box" onclick="isolateMeshEntity('${n.id}')" style="cursor:pointer; margin-bottom:4px; padding:5px;">
+        <div class="row" style="font-weight:bold; color:#fff;"><span>${n.name} [${n.type}]</span></div>
+        <div class="row"><span>MAC: ${n.mac}</span><span style="color:var(--neon); font-size:0.92em;">${peerSpacings}</span></div>
+      </div>`;
+  });
+}
+
+function isolateMeshEntity(id) {
+  const visualObj = visualNodesMap.get(id);
+  if (!visualObj) return;
+  const data = visualObj.userData.core;
+  const term = document.getElementById('terminal-diagnostics');
+  
+  document.getElementById('target-lbl-name').innerText = data.name;
+  document.getElementById('target-domain-class').innerText = `Infrastructure Mode [${data.type}]`;
+  document.getElementById('target-dimensions').innerText = "Fixed Mesh Station chassis";
+  document.getElementById('target-vitals-pulse').innerText = "STATIC INFRASTRUCTURE";
+  
+  term.textContent += `\n\n[INSPECT_NODE]: Isolated multi-hop transceiver address line: ${data.mac}\nChannel State Information array streaming phase data cleanly across adjacent links.`;
+  term.scrollTop = term.scrollHeight;
+  controls.target.set(visualObj.position.x, visualObj.position.y, visualObj.position.z);
+}
+
+// --- INTERACTIVE RAYCAST SELECTION CLICKS CONTROLLER ---
+const raycaster = new THREE.Raycaster(); const pointer = new THREE.Vector2();
+window.addEventListener('click', (e) => {
+  const bounds = renderer.domElement.getBoundingClientRect();
+  if(e.clientX < bounds.left || e.clientX > bounds.right || e.clientY < bounds.top || e.clientY > bounds.bottom) return;
+
+  pointer.x = ((e.clientX - bounds.left) / container.clientWidth) * 2 - 1;
+  pointer.y = -((e.clientY - bounds.top) / container.clientHeight) * 2 + 1;
+
+  raycaster.setFromCamera(pointer, camera);
+  const interactivePool = [...visualNodesMap.values(), ...visualTargetsMap.values(), ...topographicMeshesPool];
+  const intersections = raycaster.intersectObjects(interactivePool, true);
+
+  if (intersections.length > 0) {
+    let hitObject = intersections.object;
+    const term = document.getElementById('terminal-diagnostics');
+    
+    if (hitObject.userData.isTopography || (hitObject.parent && hitObject.parent.userData.isTopography)) {
+      const tLabel = hitObject.userData.label || hitObject.parent.userData.label;
+      document.getElementById('target-lbl-name').innerText = tLabel;
+      document.getElementById('target-domain-class').innerText = "Static Boundary / Surface Plane";
+      document.getElementById('target-dimensions').innerText = "Resolved via CSI Ray Trace";
+      document.getElementById('target-vitals-pulse').innerText = "ZERO VELOCITY ANOMALY";
+      term.textContent += `\n\n[INSPECT_SURFACE]: Multipath echo wavefront contacted: ${tLabel}.\nGemini Profile: Surface resolved from phase-history delay variations.`;
+    } 
+    else if (hitObject.userData.isTarget || (hitObject.parent && hitObject.parent.userData.isTarget)) {
+      const td = hitObject.userData.core || hitObject.parent.userData.core;
+      document.getElementById('target-lbl-name').innerText = td.name;
+      document.getElementById('target-domain-class').innerText = td.domain;
+      document.getElementById('target-dimensions').innerText = td.dimensions;
+      document.getElementById('target-vitals-pulse').innerText = td.pulse;
+      term.textContent += `\n\n[INSPECT_TARGET]: Isolated dynamic anomaly cross-section:\n${td.desc}`;
+    }
+    term.scrollTop = term.scrollHeight;
+    controls.target.set(intersections.point.x, intersections.point.y, intersections.point.z);
+  }
+});
+
+// Infinite Cascading Node Search Extension Mechanism Action
+function cascadeNewRemoteNode() {
+  const term = document.getElementById('terminal-diagnostics');
+  
+  const newIndex = nodesChainRegistry.length;
+  const lastNode = nodesChainRegistry[newIndex - 1];
+  const newId = `NODE-0${newIndex}`;
+  
+  const newX = lastNode.pos.x + (Math.random() * 24 - 12);
+  const newZ = lastNode.pos.z + 32;
+  const newMac = `FF:AA:03:EE:BC:${newIndex}${newIndex}`;
+  
+  const newNodeData = { id: newId, name: `Cascaded Node Extension 0${newIndex}`, mac: newMac, type: "Multi-Hop Extender", pos: {x: newX, y: 0, z: newZ}, connections: [lastNode.id] };
+  
+  lastNode.connections.push(newId);
+  nodesChainRegistry.push(newNodeData);
+  
+  // Encrypt state modifications immediately
+  saveSecureNodeMatrix(nodesChainRegistry);
+  
+  // Rerender layout blocks safely
+  drawAllNetworkNodeMeshes();
+  
+  term.textContent += `\n\n[CASCADE_SEARCH]: Pushing Layer-2 search frame configuration across node chain boundary...`;
+  term.textContent += `\n[SUCCESS]: Identified remote device signature [${newMac}]. Node provisioned, bound, and written into local encrypted memory registries safely.`;
+  term.scrollTop = term.scrollHeight;
+  
+  updateNetworkAdjacencyTableUI();
+}
+
+// --- REAL-TIME WATERFALL SPECTRUM VISUALIZER LOGIC LAYER ---
+const canvasWF = document.getElementById('canvas-waterfall');
+const ctxWF = canvasWF.getContext('2d');
+
+function setupWaterfallDimensions() {
+  canvasWF.width = canvasWF.parentElement.clientWidth;
+  canvasWF.height = canvasWF.parentElement.clientHeight - 30;
+}
+window.addEventListener('load', setupWaterfallDimensions);
+window.addEventListener('resize', setupWaterfallDimensions);
+
+let waterfallRows = [];
+function renderSpectrogramWaterfallTick() {
+  if (!canvasWF.width) return;
+  
+  // Generate a brand new row of multi-band energy sweep spectrum nodes randomly matching active channels
+  let newRow = [];
+  for(let i=0; i<canvasWF.width; i++) {
+    // Inject periodic energy bursts to simulate beacon signals from birds, drones, and nodes
+    let baselineNoise = Math.random() * 45;
+    if (i % 60 === 0 && Math.random() > 0.6) baselineNoise = 180 + Math.random() * 75; // Active channel strobe pulse
+    if (Math.abs(i - (Math.sin(timeTicks * 2) * (canvasWF.width/3) + (canvasWF.width/2))) < 8) baselineNoise = 200 + Math.random() * 55; // Moving target track line
+    newRow.push(baselineNoise);
+  }
+  
+  waterfallRows.unshift(newRow);
+  if (waterfallRows.length > canvasWF.height) { waterfallRows.pop(); }
+  
+  // Draw the entire pixel grid color layout back onto the display buffer
+  ctxWF.clearRect(0,0, canvasWF.width, canvasWF.height);
+  for(let y=0; y<waterfallRows.length; y++) {
+    let rowData = waterfallRows[y];
+    for(let x=0; x<rowData.length; x++) {
+      let val = rowData[x];
+      if (val > 150) {
+        ctxWF.fillStyle = `rgb(${val}, ${Math.floor(val*0.1)}, ${Math.floor(val*0.2)})`; // Red hot active sweeps
+      } else if (val > 80) {
+        ctxWF.fillStyle = `rgb(0, ${val}, ${val})`; // Blue/Cyan processing phase signals
+      } else {
+        ctxWF.fillStyle = `rgb(0, ${Math.floor(val*0.4)}, 0)`; // Soft green baseline matrix background noise
+      }
+      ctxWF.fillRect(x, y, 1, 1);
+    }
+  }
+}
+
+// --- MAIN RUNTIME CORE REFRESH TICK ENGINE LOOP ---
+let timeTicks = 0;
+function animateSystemCore() {
+  requestAnimationFrame(animateSystemCore); timeTicks += 0.007; controls.update();
+  let localizedIncursionActive = false;
+
+  // Process Continuous Path Trajectories Loops For Target Elements
+  const avian = visualTargetsMap.get("SIG-AVIAN");
+  if(avian) {
+    avian.position.x = Math.sin(timeTicks * 0.8) * 35;
+    avian.position.z = Math.cos(timeTicks * 0.5) * 35 - 20;
+    avian.position.y = 15 + Math.sin(timeTicks * 1.6) * 3;
+  }
+
+  const drone = visualTargetsMap.get("SIG-DRONE");
+  if(drone) {
+    drone.position.x = Math.cos(timeTicks * 0.4) * -40;
+    drone.position.z = Math.sin(timeTicks * 0.6) * 40 - 30;
+    drone.position.y = 25 + Math.sin(timeTicks * 1.1) * 4;
+  }
+
+  const bear = visualTargetsMap.get("SIG-BEAR");
+  if(bear) {
+    bear.position.x = Math.cos(timeTicks * 0.12) * -55;
+    bear.position.z = Math.sin(timeTicks * 0.18) * 20 + 10;
+    if(Math.sqrt(bear.position.x**2 + bear.position.z**2) < 16) localizedIncursionActive = true;
+  }
+
+  // Update real-time spatial calculations pipelines dependencies
+  refreshMeshVectorTraces();
+  evaluateRFReflectionCollisions();
+  renderSpectrogramWaterfallTick();
+
+  // Manage tactical warning borders visual flashing system overlays
+  const strobe = document.getElementById('strobe-perimeter');
+  if(localizedIncursionActive) strobe.classList.add('breach-flash');
+  else strobe.classList.remove('breach-flash');
+
+  renderer.render(scene, camera);
+}
+
+// Run Unified Matrix Architecture System
+setTimeout(() => { setupWaterfallDimensions(); }, 100);
+updateNetworkAdjacencyTableUI();
+animateSystemCore();
+window.addEventListener('resize', () => {
+  camera.aspect = container.clientWidth / container.clientHeight; camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+});
+</script>
+</body>
+</html>
